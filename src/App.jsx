@@ -1,43 +1,52 @@
-import { useState } from 'react';
 import TaskList from './components/TaskList.jsx';
 import './App.css';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const API_BASE_URL = `${import.meta.env.VITE_BASE_URL}/tasks`;
 
 const App = () => {
-  const [taskData, setData] = useState([
-    {
-      id: 1,
-      title: 'Mow the lawn',
-      isComplete: false,
-    },
-    {
-      id: 2,
-      title: 'Cook Pasta',
-      isComplete: true,
-    },
-  ]);
+  const [taskData, setTaskData] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const toggleComplete = (taskId) => {
-    const tasks = taskData.map(task => {
-      if (task.id === taskId) {
-        return { ...task, isComplete: !task.isComplete };
-      } else {
-        return task;
-      }
-    });
+  useEffect(() => {
+    axios.get(API_BASE_URL)
+      .then((response) => {
+        setTaskData(response.data);
+      })
+      .catch((error) => {
+        setErrorMessage(<section>{error.response.data.message}</section>);
+      });
+  }, []);
 
-    setData(tasks);
+  const toggleTaskComplete = (taskId, currentStatus) => {
+    const endpoint = `${API_BASE_URL}/${taskId}/${currentStatus 
+      ? 'mark_incomplete' : 'mark_complete'}`;
+
+    axios.patch(endpoint)
+      .then(() => {
+        // Update the local state only after API success
+        setTaskData(tasks =>
+          tasks.map(task =>
+            task.id === taskId ? { ...task, isComplete: !task.isComplete } : task
+          )
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+        setErrorMessage(<section>Error updating task.</section>);
+      });
   };
 
   const deleteTask = (taskId) => {
-    const updatedTasks = [];
-
-    taskData.forEach((task) => {
-      if (task.id !== taskId) {
-        updatedTasks.push(task);
-      }
-    });
-
-    setData(updatedTasks);
+    axios.delete(`${API_BASE_URL}/${taskId}`)
+      .then(() => {
+        setTaskData(tasks => tasks.filter(task => task.id !== taskId));
+      })
+      .catch((error) => {
+        console.error(error);
+        setErrorMessage(<section>Error deleting task.</section>);
+      });
   };
 
   return (
@@ -45,12 +54,15 @@ const App = () => {
       <header className="App-header">
         <h1>Ada&apos;s Task List</h1>
       </header>
+      {errorMessage}
       <main>
-        <TaskList
-          tasks={taskData}
-          toggleComplete = {toggleComplete}
-          deleteTask = {deleteTask}
-        ></TaskList>
+        <div>
+          <TaskList
+            tasks={taskData}
+            toggleComplete={toggleTaskComplete}
+            deleteTask={deleteTask}
+          />
+        </div>
       </main>
     </div>
   );
