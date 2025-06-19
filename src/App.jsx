@@ -2,6 +2,7 @@ import TaskList from './components/TaskList.jsx';
 import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import NewTaskForm from './components/NewTaskForm.jsx';
 
 const API_BASE_URL = `${import.meta.env.VITE_BASE_URL}/tasks`;
 
@@ -20,7 +21,7 @@ const App = () => {
   }, []);
 
   const toggleTaskComplete = (taskId, currentStatus) => {
-    const endpoint = `${API_BASE_URL}/${taskId}/${currentStatus 
+    const endpoint = `${API_BASE_URL}/${taskId}/${currentStatus
       ? 'mark_incomplete' : 'mark_complete'}`;
 
     axios.patch(endpoint)
@@ -63,6 +64,9 @@ const App = () => {
             deleteTask={deleteTask}
           />
         </div>
+        <container>
+          <NewTaskForm/>
+        </container>
       </main>
     </div>
   );
