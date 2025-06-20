@@ -5,6 +5,7 @@ const NewTaskForm = (props) => {
   // add formField piece of state//
   const [formField, setFormField] = useState({
     title: '',
+    description: '',
   });
   // add event handler to ensure changes in input field affect the state
   const handleTaskChange = (event) => {
@@ -19,10 +20,12 @@ const NewTaskForm = (props) => {
 
     props.onTaskAdd({
       title: formField.title,
+      description: formField.description,
     });
 
     setFormField({
       title: '',
+      description: ''
     });
   };
 
@@ -37,6 +40,15 @@ const NewTaskForm = (props) => {
           value={formField.title}
           // add event handler to input to ensure it use it when it is changed//
           onChange={handleTaskChange} />
+      </div>
+      <div>
+        <label htmlFor="description">Task Description:</label>
+        <input
+          id="description"
+          name="description"
+          value={formField.description}
+          onChange={handleTaskChange}
+        />
       </div>
       <input
         type="submit"

@@ -77,7 +77,7 @@ const App = () => {
   const addTaskData = (newTask) => {
     axios.post(API_BASE_URL, {
       title: newTask.title,
-      description: '',
+      description: newTask.description,
     })
       .then((response) => {
         // Append the new task returned by backend to the local state
