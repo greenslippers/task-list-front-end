@@ -13,7 +13,15 @@ const App = () => {
   useEffect(() => {
     axios.get(API_BASE_URL)
       .then((response) => {
-        setTaskData(response.data);
+        // modify to normalize data received from backend (is_complete > isComplete)
+        const normalized = response.data.map(task => ({
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          isComplete: task.is_complete,
+        }));
+        setTaskData(normalized);
+        // setTaskData(response.data);
       })
       .catch((error) => {
         setErrorMessage(<section>{error.response.data.message}</section>);
@@ -73,7 +81,6 @@ const App = () => {
     })
       .then((response) => {
         // Append the new task returned by backend to the local state
-        // setTaskData(prev => [...prev, response.data]);
         // create normalized task to align backend respond is_complete and isComplete
         const rawTask = response.data.task;
 
