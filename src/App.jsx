@@ -50,6 +50,47 @@ const App = () => {
       });
   };
 
+  // // add method that adds a new task to the task data
+  // const addTaskData = (newTask) => {
+  //   // LOGIC TO GENERATE THE NEXT VALID task ID
+  //   const nextID = Math.max(0, ...taskData.map((task) => task.id)) + 1;
+  //   // Duplicate the student list
+  //   const newTaskList = [...taskData];
+
+  //   newTaskList.push({
+  //     id: nextID,
+  //     title: newTask.title,
+  //     isComplete: false,
+  //   });
+
+  //   setTaskData(newTaskList);
+  // };
+
+  const addTaskData = (newTask) => {
+    axios.post(API_BASE_URL, {
+      title: newTask.title,
+      description: '',
+    })
+      .then((response) => {
+        // Append the new task returned by backend to the local state
+        // setTaskData(prev => [...prev, response.data]);
+        // create normalized task to align backend respond is_complete and isComplete
+        const rawTask = response.data.task;
+
+        const normalizedTask = {
+          id: rawTask.id,
+          title: rawTask.title,
+          description: rawTask.description,
+          isComplete: rawTask.is_complete,
+        };
+        setTaskData(prev => [...prev, normalizedTask]);
+      })
+      .catch((error) => {
+        console.error(error);
+        setErrorMessage(<section>Error adding task.</section>);
+      });
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -60,13 +101,15 @@ const App = () => {
         <div>
           <TaskList
             tasks={taskData}
-            toggleComplete={toggleTaskComplete}
-            deleteTask={deleteTask}
+            onToggleComplete={toggleTaskComplete}
+            onDeleteTask={deleteTask}
           />
         </div>
-        <container>
-          <NewTaskForm/>
-        </container>
+        <div>
+          <NewTaskForm
+            onTaskAdd={addTaskData}
+          ></NewTaskForm>
+        </div>
       </main>
     </div>
   );

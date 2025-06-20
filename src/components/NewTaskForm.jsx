@@ -1,9 +1,10 @@
 import{ useState } from 'react';
+import PropTypes from 'prop-types';
 
-const NewTaskForm = () => {
+const NewTaskForm = (props) => {
   // add formField piece of state//
   const [formField, setFormField] = useState({
-    name: '',
+    title: '',
   });
   // add event handler to ensure changes in input field affect the state
   const handleTaskChange = (event) => {
@@ -12,15 +13,28 @@ const NewTaskForm = () => {
       [event.target.name]: event.target.value,
     });
   };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    props.onTaskAdd({
+      title: formField.title,
+    });
+
+    setFormField({
+      title: '',
+    });
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="name"> New Task:</label>
         <input
-          id="name"
-          name="name"
+          id="title"
+          name="title"
           // add value to make input field read from the state//
-          value={formField.name}
+          value={formField.title}
           // add event handler to input to ensure it use it when it is changed//
           onChange={handleTaskChange} />
       </div>
@@ -29,6 +43,10 @@ const NewTaskForm = () => {
         value="Add Task" />
     </form>
   );
+};
+
+NewTaskForm.propTypes = {
+  onTaskAdd: PropTypes.func.isRequired,
 };
 
 export default NewTaskForm;

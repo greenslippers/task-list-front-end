@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
-
 import './Task.css';
 
 const Task = (props) => {
   const completeButtonClicked = () => {
-    props.toggleComplete(props.id);
+    props.onToggleComplete(props.id, props.isComplete);
   };
 
   const deleteButtonClicked = () => {
-    props.deleteTask(props.id);
+    props.onDeleteTask(props.id);
   };
 
   const buttonClass = props.isComplete ? 'tasks__item__toggle--completed' : '';
@@ -34,8 +33,8 @@ Task.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   isComplete: PropTypes.bool.isRequired,
-  toggleComplete: PropTypes.func.isRequired,
-  deleteTask: PropTypes.func.isRequired,
+  onToggleComplete: PropTypes.func.isRequired,
+  onDeleteTask: PropTypes.func.isRequired,
 };
 
 export default Task;
